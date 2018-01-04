@@ -32,6 +32,8 @@ on early-init
 on init
     export LD_SHIM_LIBS "/system/vendor/lib64/libflp.so|libshims_flp.so:/system/vendor/lib64/libizat_core.so|libshims_get_process_name.so:/system/bin/mm-qcamera-daemon|libshim_atomic.so:/system/vendor/lib/libmmcamera2_imglib_modules.so|libshim_atomic.so:/system/vendor/lib/libqomx_jpegenc.so|libshim_atomic.so:/system/vendor/lib/libmmcamera2_stats_modules.so|libshim_atomic.so"
 
+    export LD_PRELOAD libshim_atomic.so
+
 on boot
     # charger
     chown system system /sys/bus/i2c/drivers/lc709203/batt_capacity
@@ -71,9 +73,6 @@ on property:sys.sensors.acc=*
     start calibacc
 
 on property:sys.boot_completed=1
-    restart ril-daemon
-    restart ril-daemon1
-    restart netmgrd
     swapon_all fstab.qcom
     write /sys/module/process_reclaim/parameters/enable_process_reclaim 1
     write /sys/module/process_reclaim/parameters/pressure_max 70
@@ -88,3 +87,4 @@ on property:sys.boot_completed=1
     write /sys/kernel/mm/ksm/pages_to_scan 100
     write /sys/kernel/mm/ksm/sleep_millisecs 500
     write /sys/kernel/mm/ksm/run 1
+    setprop sys.perf.profile 1
